@@ -26,10 +26,8 @@ jobs:
     - name: npm ci
       run: npm ci
 
-    - name: set env
+    - name: deploy
+      run: npm run deploy
       env:
         CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         CF_EMAIL: ${{ secrets.CF_EMAIL }}
-
-    - name: deploy
-      run: npm run deploy
