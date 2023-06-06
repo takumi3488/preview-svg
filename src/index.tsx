@@ -2,7 +2,7 @@ import { Hono } from "hono";
 
 const app = new Hono();
 
-function View(props: { svg: string; url: string }) {
+function Preview(props: { svg: string; url: string }) {
   const { svg, url } = props;
   const title = url.split("/").pop()!;
   return (
@@ -24,7 +24,7 @@ app.get("/preview/:url", async (c) => {
   const res = await fetch(url);
   if (res.status !== 200) return c.text("Failed to fetch the image");
   const svg = await res.text();
-  return c.html(<View svg={svg} url={url} />);
+  return c.html(<Preview svg={svg} url={url} />);
 });
 
 app.get("/download/:url", async (c) => {
