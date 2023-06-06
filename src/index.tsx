@@ -2,13 +2,16 @@ import { Hono } from "hono";
 
 const app = new Hono();
 
-function View(props: { svg: string; title: string }) {
-  const { svg, title } = props;
-  console.log(svg);
+function View(props: { svg: string; url: string }) {
+  const { svg, url } = props;
+  const title = url.split("/").pop()!;
   return (
     <html>
       <title>{title}</title>
-      <body dangerouslySetInnerHTML={{ __html: svg }} />
+      <body>
+        <div dangerouslySetInnerHTML={{ __html: svg }} />
+        <a href={`/download/${url}`} download={title}>ダウンロード</a>
+      </body>
     </html>
   );
 }
@@ -19,8 +22,17 @@ app.get("/", async (c) => {
   const res = await fetch(url);
   if (res.status !== 200) return c.text("Failed to fetch the image");
   const svg = await res.text();
+  return c.html(<View svg={svg} url={url} />);
+});
+
+app.get("/download/:url", async (c) => {
+  const url = c.req.param("url");
+  const res = await fetch(url);
+  if (res.status !== 200) return c.text("Failed to fetch the image");
+  const svg = await res.text();
   const title = url.split("/").pop()!;
-  return c.html(<View svg={svg} title={title} />);
+  c.header("Content-Disposition", `attachment; filename=${title}`);
+  return c.text(svg);
 });
 
 export default app;
