@@ -10,14 +10,16 @@ function View(props: { svg: string; url: string }) {
       <title>{title}</title>
       <body>
         <div dangerouslySetInnerHTML={{ __html: svg }} />
-        <a href={`/download/${url}`} download={title}>ダウンロード</a>
+        <a href={`/download/${url}`} download={title}>
+          ダウンロード
+        </a>
       </body>
     </html>
   );
 }
 
-app.get("/", async (c) => {
-  const url = c.req.query("url");
+app.get("/preview/:url", async (c) => {
+  const url = c.req.param("url");
   if (!url) return c.text("You have to inclued `url` as a query parameter");
   const res = await fetch(url);
   if (res.status !== 200) return c.text("Failed to fetch the image");
