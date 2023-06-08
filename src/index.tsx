@@ -5,9 +5,11 @@ const app = new Hono();
 function Top() {
   return (
     <html>
+      <title>Preview SVG</title>
       <body>
+        <h1>Preview SVG</h1>
         <form action="/preview" method="post">
-          <input type="url" name="url" />
+          <input type="url" name="url" placeholder="ここにURLを入力" />
           <input type="submit" value="プレビュー" />
         </form>
       </body>
