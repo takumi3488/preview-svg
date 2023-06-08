@@ -15,17 +15,26 @@ function Top() {
   );
 }
 
-function Preview(props: { svg: string; url: string }) {
-  const { svg, url } = props;
+function Preview(props: { svg: string; url: string, webp?: boolean }) {
+  const { svg, url, webp } = props;
   const title = url.split("/").pop()!;
   return (
     <html>
       <title>{title}</title>
       <body>
-        <div dangerouslySetInnerHTML={{ __html: svg }} />
-        <a href={`/download/${url}`} download={title}>
-          ダウンロード
-        </a>
+        {webp ? <>
+          <div>
+            <img src={url} />
+          </div>
+          <a href={`/download/${url.replace(".webp", ".svg")}`} download={title.replace(".webp", ".svg")}>
+            ダウンロード
+          </a>
+        </> : <>
+          <div dangerouslySetInnerHTML={{ __html: svg }} />
+          <a href={`/download/${url}`} download={title}>
+            ダウンロード
+          </a>
+        </>}
       </body>
     </html>
   );
@@ -56,6 +65,15 @@ app.get("/download/:url{.+.svg}", async (c) => {
   const title = url.split("/").pop()!;
   c.header("Content-Disposition", `attachment; filename=${title}`);
   return c.text(svg);
+});
+
+app.get("/preview/:url{.+.webp}", async (c) => {
+  const url = c.req.param("url");
+  if (!url) return c.text("You have to inclued `url` as a query parameter");
+  const res = await fetch(url);
+  if (res.status !== 200) return c.text("Failed to fetch the image");
+  const svg = await res.text();
+  return c.html(<Preview svg={svg} url={url} webp />);
 });
 
 export default app;
