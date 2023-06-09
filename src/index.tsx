@@ -29,7 +29,10 @@ function Preview(props: { svg: string; url: string, webp?: boolean }) {
             <img src={url} />
           </div>
           <a href={`/download/${url.replace(".webp", ".svg")}`} download={title.replace(".webp", ".svg")}>
-            ダウンロード
+            ダウンロード(svg)
+          </a>
+          <a href={`/download/${url}`} download={title}>
+            ダウンロード(webp)
           </a>
         </> : <>
           <div dangerouslySetInnerHTML={{ __html: svg }} />
